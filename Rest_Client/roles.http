@@ -1,0 +1,44 @@
+//? config
+@name = users
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+@baseUrl = http://{{host}}/{{name}}
+@adminAuthToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0ZG9kMWMwMDAzb2U2dHBlODZxNDNqIiwiZW1haWwiOiJhZG1pbkBlZHUuY29tIiwiaWF0IjoxNzU2OTI4OTc1LCJleHAiOjE3NTc1MzM3NzV9.m09hB2h3e2JBjtuZGnmxGcoNaemfgobGgzJqUuPyvDw
+@userAuthToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0ZG9kOHgwMDA2b2U2dDlxdGc2ODR5IiwiZW1haWwiOiJ0ZWFjaGVyQGVkdS5jb20iLCJpYXQiOjE3NTY5MjkwMTgsImV4cCI6MTc1NzUzMzgxOH0.Ze90ULL40L6Udr8O7DzGhJTk7DcH1zYYLhCXkuL8G4Y
+### Health Check
+GET http://localhost:3000/health HTTP/1.1
+
+### All users
+GET {{baseUrl}} HTTP/1.1
+Authorization: Bearer {{adminAuthToken}}
+
+### User by ID
+GET {{baseUrl}}/cmf3b4nt20000oev105hkf2hr HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+### Create a user
+POST {{baseUrl}} HTTP/1.1
+Authorization: Bearer {{authToken}}
+content-type: application/json
+
+{
+  "email": "new.user@edu.com",
+  "password": "password123",
+  "name": "New User"
+}
+
+### Update a user
+PUT {{baseUrl}}/cmf4av9f50000oe13h5700r6i HTTP/1.1
+Authorization: Bearer {{authToken}}
+content-type: application/json
+
+{
+  "name": "Updated Name",
+  "active": true
+}
+
+### Delete logic a user
+DELETE {{baseUrl}}/cmf4av9f50000oe13h5700r6i HTTP/1.1
+Authorization: Bearer {{authToken}}

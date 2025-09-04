@@ -1,0 +1,58 @@
+{
+  "name": "backend-professional",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Backend profesional con Docker + Dev Containers",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch -r tsconfig-paths/register src/server.ts",
+    "dev:full": "concurrently \"npm run dev\" \"npm run db:studio\"",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx src/prisma/seed.ts",
+    "db:studio": "prisma studio --port 5555"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "typescript",
+    "prisma",
+    "docker"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^6.15.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pino": "^9.9.0",
+    "pino-http": "^10.5.0",
+    "pino-pretty": "^13.1.1",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20.12.7",
+    "concurrently": "^9.2.1",
+    "prisma": "^6.15.0",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "prisma": {
+    "seed": "tsx src/prisma/seed.ts"
+  }
+}

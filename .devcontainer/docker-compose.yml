@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # Bind mount para hot reload (código sincronizado)
+      - ..:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity
+    user: "1000:1000"  # Mapear con el usuario del host
+    ports:
+      - "3000:3000"
+      - "5555:5555"  # Para Prisma Studio
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/appdb
+      - PORT=3000
+      - NODE_ENV=development
+    depends_on:
+      - db
+    networks:
+      - backend-network
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persistir datos de DB
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+volumes:
+  postgres_data:
+
+networks:
+  backend-network:
+    driver: bridge

@@ -1,0 +1,32 @@
+{
+  "name": "Backend Professional",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  
+  "features": {},
+  
+  "forwardPorts": [3000, 5432, 5555],
+  "portsAttributes": {
+    "3000": {
+      "label": "Express Server",
+      "onAutoForward": "notify"
+    },
+    "5555": {
+      "label": "Prisma Studio",
+      "onAutoForward": "ignore"
+    }
+  },
+
+  "postCreateCommand": "pnpm install && pnpm db:generate",
+  
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "typescript.preferences.importModuleSpecifier": "relative"
+      },
+      "extensions": []
+    }
+  }
+}

@@ -1,0 +1,40 @@
+//? config
+@name = auth
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+@baseUrl = http://{{host}}/{{name}}
+
+### Health Check
+GET http://localhost:3000/health HTTP/1.1
+
+### Register
+POST {{baseUrl}}/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "test.user@edu.com",
+  "password": "password123",
+  "name": "Test User"
+}
+
+### Login
+POST {{baseUrl}}/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "admin@edu.com",
+  "password": "wrongpassword"
+}
+
+### TOKEN
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWYzOGVwM2gwMDAwb2V0Nm9xMHdmYm96IiwiZW1haWwiOiJhZG1pbkBlZHUuY29tIiwiaWF0IjoxNzU2OTIzMTQ1LCJleHAiOjE3NTc1Mjc5NDV9.wDKf6M1r9XaJMxKDKm57FIbtna31BZXFo9rtrxle-hg
+
+### Get Profile - Protected (requires token)
+GET {{baseUrl}}/profile HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+### Private check
+GET {{baseUrl}} HTTP/1.1
+Authorization: Bearer {{authToken}}

@@ -1,0 +1,50 @@
+//? config
+@name = users
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+@baseUrl = http://{{host}}/{{name}}
+@authTokenUser = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY1ZmVpdmwwMDAwb2U2OXlsYnBtb3VuIiwiZW1haWwiOiJ0ZXN0LnVzZXJAZWR1LmNvbSIsImlhdCI6MTc1Njk5MTU0NywiZXhwIjoxNzU3NTk2MzQ3fQ.s7rzgTlUAK-PksoutZ0oPEnHSDJwk4lfkknaEgCgooo
+@authTokenAdmin = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0cmdqYjkwMDFob2UwbzFxdTBmMGVxIiwiZW1haWwiOiJhZG1pbkBlZHUuY29tIiwiaWF0IjoxNzU2OTkxNzU3LCJleHAiOjE3NTc1OTY1NTd9.4xk5sVYfZlMMcaTLh2yGEO1LQ9F700E9R22izHJO4ew
+@authTokenTeacher = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0cmdqanMwMDFrb2UwbzB3endqMGhxIiwiZW1haWwiOiJ0ZWFjaGVyQGVkdS5jb20iLCJpYXQiOjE3NTY5OTE3ODUsImV4cCI6MTc1NzU5NjU4NX0.P7LX-7f3pZP0FSqqjnAZDsG-Y2aDHgsy_KLb5UeFaKI
+@authTokenStudent = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0cmdqcjkwMDFub2Uwb2w1YjRyM3VzIiwiZW1haWwiOiJzdHVkZW50QGVkdS5jb20iLCJpYXQiOjE3NTY5OTE4MTQsImV4cCI6MTc1NzU5NjYxNH0.1mWq49IIl4zSTig1Bwmd-S8iMjh5l4hFxUXiS0byc8c
+### Health Check
+GET http://localhost:3000/health HTTP/1.1
+
+### Get Profile - Protected (requires token)
+GET {{baseUrl}}/profile HTTP/1.1
+Authorization: Bearer {{authTokenAdmin}}
+
+### All users
+GET {{baseUrl}} HTTP/1.1
+Authorization: Bearer {{authTokenAdmin}}
+
+### User by ID
+GET {{baseUrl}}/cmf5feivl0000oe69ylbpmoun HTTP/1.1
+Authorization: Bearer {{authTokenAdmin}}
+
+### Create a user
+POST {{baseUrl}} HTTP/1.1
+Authorization: Bearer {{authTokenAdmin}}
+content-type: application/json
+
+{
+  "email": "new.user@edu.com",
+  "password": "password123",
+  "name": "New User"
+}
+
+### Update a user
+PUT {{baseUrl}}/cmf5fv1di0001oe69nefl26ds HTTP/1.1
+Authorization: Bearer {{authTokenAdmin}}
+content-type: application/json
+
+{
+  "name": "Updated User Name",
+  "active": true
+}
+
+### Delete logic a user
+DELETE {{baseUrl}}/cmf5fv1di0001oe69nefl26ds HTTP/1.1
+Authorization: Bearer {{authTokenAdmin}}
