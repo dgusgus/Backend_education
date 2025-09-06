@@ -3,7 +3,7 @@ import { z } from 'zod'
 // Esquemas de validación Zod
 export const createUserSchema = z.object({
   email: z.email({ message: "Formato de correo inválido" }),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(6, 'Password mus t be at least 6 characters'),
   name: z.string().min(2, 'Name must be at least 2 characters'),
 })
 

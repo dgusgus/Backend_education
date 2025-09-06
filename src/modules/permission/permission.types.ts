@@ -35,6 +35,8 @@ export const SYSTEM_PERMISSIONS = {
   // Permisos de estudiantes (para etapas futuras)
   STUDENT_READ: 'STUDENT_READ',
   STUDENT_MANAGE: 'STUDENT_MANAGE',
+  // Nuevo permiso para el Teacher Module
+  TEACHER_DASHBOARD_ACCESS: 'TEACHER_DASHBOARD_ACCESS',
 } as const
 
 export type PermissionName = keyof typeof SYSTEM_PERMISSIONS

@@ -8,15 +8,18 @@ datasource db {
 }
 
 model User {
-  id              String          @id @default(cuid())
-  email           String          @unique
+  id              String           @id @default(cuid())
+  email           String           @unique
   password        String
   name            String
-  active          Boolean         @default(true)
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  attendedCourses CourseStudent[]
+  active          Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  attendances     Attendance[]
+  enrolledCourses CourseStudent[]
   taughtCourses   CourseTeacher[]
+  grades          Grade[]
+  academic        StudentAcademic?
   roles           UserRole[]
 
   @@map("users")
@@ -78,8 +81,10 @@ model Course {
   active      Boolean         @default(true)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+  attendances Attendance[]
   students    CourseStudent[]
   teachers    CourseTeacher[]
+  grades      Grade[]
 
   @@map("courses")
 }
@@ -106,4 +111,53 @@ model CourseStudent {
 
   @@unique([courseId, userId])
   @@map("course_students")
+}
+
+model StudentAcademic {
+  id              String    @id @default(cuid())
+  studentId       String    @unique
+  enrollmentDate  DateTime
+  graduationDate  DateTime?
+  currentSemester Int       @default(1)
+  status          String    @default("active")
+  cumulativeGPA   Float     @default(0.0)
+  totalCredits    Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  student         User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("student_academics")
+}
+
+model Grade {
+  id          String   @id @default(cuid())
+  studentId   String
+  courseId    String
+  value       Float
+  letterGrade String?
+  semester    String
+  comments    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student     User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId, semester])
+  @@map("grades")
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  studentId String
+  courseId  String
+  date      DateTime
+  status    String   @default("present")
+  comments  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId, date])
+  @@map("attendances")
 }

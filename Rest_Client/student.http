@@ -1,0 +1,68 @@
+//? config
+@name = students
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+@baseUrl = http://{{host}}/{{name}}
+### Auth Tokens
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY3ZTVhamMwMDFoanhhOG05YnU0ZHp4IiwiZW1haWwiOiJhZG1pbkBlZHUuY29tIiwiaWF0IjoxNzU3MTIwNjYzLCJleHAiOjE3NTc3MjU0NjN9.WFyRksnINs5A9poaKG_cnhM98_5bcKAtaVwVE6feLdU
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY1ZmVpdmwwMDAwb2U2OXlsYnBtb3VuIiwiZW1haWwiOiJ0ZXN0LnVzZXJAZWR1LmNvbSIsImlhdCI6MTc1Njk5MTU0NywiZXhwIjoxNzU3NTk2MzQ3fQ.s7rzgTlUAK-PksoutZ0oPEnHSDJwk4lfkknaEgCgooo
+@teacherToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0cmdqanMwMDFrb2UwbzB3endqMGhxIiwiZW1haWwiOiJ0ZWFjaGVyQGVkdS5jb20iLCJpYXQiOjE3NTY5OTM2NzEsImV4cCI6MTc1NzU5ODQ3MX0.itp_vU6j9lyDL5qYani3inAyYPDcTGBr9vRiY1aPkmg
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0cmdqcjkwMDFub2Uwb2w1YjRyM3VzIiwiZW1haWwiOiJzdHVkZW50QGVkdS5jb20iLCJpYXQiOjE3NTY5OTE4MTQsImV4cCI6MTc1NzU5NjYxNH0.1mWq49IIl4zSTig1Bwmd-S8iMjh5l4hFxUXiS0byc8c
+### Ids for testing
+@courseId = cmf5gh6mm0003oe69bbqa8qfx
+@teacherId = cmf4rgjjs001koe0o0wzwj0hq
+### Health Check
+GET http://localhost:3000/health HTTP/1.1
+
+### Get Profile - Protected (requires token)
+GET {{baseUrl}}/profile HTTP/1.1
+Authorization: Bearer {{adminToken}}
+
+### All 
+GET {{baseUrl}} HTTP/1.1
+Authorization: Bearer {{adminToken}}
+
+### User by ID
+GET {{baseUrl}}/cmf7e5b19001njxa827hachzy HTTP/1.1
+Authorization: Bearer {{adminToken}}
+
+
+### Update a student's academic info
+PUT {{baseUrl}}/cmf7e5b19001njxa827hachzy/academic HTTP/1.1
+Authorization: Bearer {{adminToken}}
+content-type: application/json
+
+{
+  "enrollmentDate": "2024-01-15T00:00:00.000Z",
+  "currentSemester": 2,
+  "status": "active"
+}
+
+### Register qualification
+POST {{baseUrl}}/cmf7e5b19001njxa827hachzy/grades HTTP/1.1
+Authorization: Bearer {{adminToken}}
+content-type: application/json
+
+{
+  "courseId": "cmf7e5b1m001sjxa8oym07dm7",
+  "value": 85,
+  "semester": "2024-1",
+  "comments": "Excellent work"
+}
+
+### Register attendance
+POST {{baseUrl}}/cmf7e5b19001njxa827hachzy/attendance HTTP/1.1
+Authorization: Bearer {{adminToken}}
+content-type: application/json
+
+{
+  "courseId": "cmf7e5b1m001sjxa8oym07dm7",
+  "date": "2024-03-20T08:00:00.000Z",
+  "status": "present"
+}
+
+### academic summary
+GET {{baseUrl}}/cmf7e5b19001njxa827hachzy/summary HTTP/1.1
+Authorization: Bearer {{adminToken}}

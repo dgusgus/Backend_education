@@ -1,44 +1,37 @@
 //? config
-@name = users
+@name = permissions
 @hostname = localhost
 @port = 3000
 @host = {{hostname}}:{{port}}
 @contentType = application/json
 @baseUrl = http://{{host}}/{{name}}
-@adminAuthToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0aGJvbjcwMDFob2VlNnY2OHlza3BvIiwiZW1haWwiOiJhZG1pbkBlZHUuY29tIiwiaWF0IjoxNzU2OTM1MjM4LCJleHAiOjE3NTc1NDAwMzh9.IUB0_V1smV1Ba6OHE3AeXTraLHWHAtLD-eLpTLmhCF4
-@userAuthToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0ZG9kOHgwMDA2b2U2dDlxdGc2ODR5IiwiZW1haWwiOiJ0ZWFjaGVyQGVkdS5jb20iLCJpYXQiOjE3NTY5MjkwMTgsImV4cCI6MTc1NzUzMzgxOH0.Ze90ULL40L6Udr8O7DzGhJTk7DcH1zYYLhCXkuL8G4Y
+### Auth Tokens
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0cmdqYjkwMDFob2UwbzFxdTBmMGVxIiwiZW1haWwiOiJhZG1pbkBlZHUuY29tIiwiaWF0IjoxNzU3MDkzODczLCJleHAiOjE3NTc2OTg2NzN9.FTOZ_HIIsS5eAJ9e9XQJG48xmb4JZfjQ5tMbXCREQ2g
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY1ZmVpdmwwMDAwb2U2OXlsYnBtb3VuIiwiZW1haWwiOiJ0ZXN0LnVzZXJAZWR1LmNvbSIsImlhdCI6MTc1Njk5MTU0NywiZXhwIjoxNzU3NTk2MzQ3fQ.s7rzgTlUAK-PksoutZ0oPEnHSDJwk4lfkknaEgCgooo
+@teacherToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0cmdqanMwMDFrb2UwbzB3endqMGhxIiwiZW1haWwiOiJ0ZWFjaGVyQGVkdS5jb20iLCJpYXQiOjE3NTY5OTM2NzEsImV4cCI6MTc1NzU5ODQ3MX0.itp_vU6j9lyDL5qYani3inAyYPDcTGBr9vRiY1aPkmg
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0cmdqcjkwMDFub2Uwb2w1YjRyM3VzIiwiZW1haWwiOiJzdHVkZW50QGVkdS5jb20iLCJpYXQiOjE3NTY5OTE4MTQsImV4cCI6MTc1NzU5NjYxNH0.1mWq49IIl4zSTig1Bwmd-S8iMjh5l4hFxUXiS0byc8c
+### Ids for testing
+@courseId = cmf5gh6mm0003oe69bbqa8qfx
+@teacherId = cmf4rgjjs001koe0o0wzwj0hq
 ### Health Check
 GET http://localhost:3000/health HTTP/1.1
-
-### All users
+### All
 GET {{baseUrl}} HTTP/1.1
-Authorization: Bearer {{adminAuthToken}}
+Authorization: Bearer {{adminToken}}
 
-### User by ID
-GET {{baseUrl}}/cmf3b4nt20000oev105hkf2hr HTTP/1.1
-Authorization: Bearer {{authToken}}
+### Permissions of a specific user
+GET {{baseUrl}}/user/cmf4rgjjs001koe0o0wzwj0hq HTTP/1.1
+Authorization: Bearer {{adminToken}}
 
-### Create a user
-POST {{baseUrl}} HTTP/1.1
-Authorization: Bearer {{authToken}}
+### Assign permission to role
+POST {{baseUrl}}/role/cmf4rgix2000eoe0oodkd6ywf/assign HTTP/1.1
+Authorization: Bearer {{adminToken}}
 content-type: application/json
 
 {
-  "email": "new.user@edu.com",
-  "password": "password123",
-  "name": "New User"
+  "permissionName": "STUDENT_MANAGE"
 }
 
-### Update a user
-PUT {{baseUrl}}/cmf4av9f50000oe13h5700r6i HTTP/1.1
-Authorization: Bearer {{authToken}}
-content-type: application/json
-
-{
-  "name": "Updated Name",
-  "active": true
-}
-
-### Delete logic a user
-DELETE {{baseUrl}}/cmf4av9f50000oe13h5700r6i HTTP/1.1
-Authorization: Bearer {{authToken}}
+### Remove Role from User
+DELETE {{baseUrl}}/role/cmf4rgix2000eoe0oodkd6ywf/remove/STUDENT_MANAGE HTTP/1.1
+Authorization: Bearer {{adminToken}}

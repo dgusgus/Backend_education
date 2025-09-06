@@ -1,5 +1,7 @@
 # borrar todo 
 npx prisma db push --force-reset 
+npx prisma migrate reset
+
 # Generar cliente de Prisma
 # nota simpre usar cuando tengamos problemas con los typos ts
 npx prisma generate
@@ -12,3 +14,6 @@ npx prisma db seed
 
 # 1. Verificar conexión a la base de datos
 npx prisma db pull
+
+### git
+sudo apt-get update && sudo apt-get install -y git

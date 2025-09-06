@@ -61,7 +61,7 @@ async function main() {
       },
     }),
 
-    // Permisos de cursos (para etapas futuras)
+    // Permisos de cursos
     prisma.permission.upsert({
       where: { name: SYSTEM_PERMISSIONS.COURSE_READ },
       update: {},
@@ -95,7 +95,7 @@ async function main() {
       },
     }),
 
-    // Permisos de estudiantes (para etapas futuras)
+    // Permisos de estudiantes
     prisma.permission.upsert({
       where: { name: SYSTEM_PERMISSIONS.STUDENT_READ },
       update: {},
@@ -112,6 +112,14 @@ async function main() {
         description: 'Manage students',
       },
     }),
+    prisma.permission.upsert({
+      where: { name: 'TEACHER_DASHBOARD_ACCESS' },
+      update: {},
+      create: {
+        name: 'TEACHER_DASHBOARD_ACCESS',
+        description: 'Access to teacher dashboard',
+      },
+    })
   ])
 
   console.log('✅ Permissions created:', permissions.map(p => p.name))
@@ -291,15 +299,9 @@ async function main() {
   })
 
   console.log(`✅ Student user created: ${studentUser.email}`)
-  
-  console.log('📝 Default passwords: admin123, teacher123, student123')
-  console.log('🎉 Seed completed!')
-
-
-  // ... código existente de seed ...
 
   // Crear cursos de ejemplo
-  const courses = await Promise.all([
+  const sampleCourses = await Promise.all([
     prisma.course.upsert({
       where: { code: 'MATH101' },
       update: {},
@@ -332,10 +334,10 @@ async function main() {
     }),
   ])
 
-  console.log('✅ Courses created:', courses.map(c => c.code))
+  console.log('✅ Courses created:', sampleCourses.map(c => c.code))
 
   // Inscribir estudiante en cursos
-  for (const course of courses) {
+  for (const course of sampleCourses) {
     await prisma.courseStudent.create({
       data: {
         courseId: course.id,
@@ -346,7 +348,76 @@ async function main() {
 
   console.log('✅ Student enrolled in courses')
 
-  // ... resto del código existente ...
+  // Crear información académica para el estudiante
+  await prisma.studentAcademic.upsert({
+    where: { studentId: studentUser.id },
+    update: {},
+    create: {
+      studentId: studentUser.id,
+      enrollmentDate: new Date('2024-01-15'),
+      currentSemester: 1,
+      status: 'active',
+      cumulativeGPA: 0.0,
+      totalCredits: 0,
+    },
+  })
+
+  console.log('✅ Student academic information created')
+
+  // Crear calificaciones de ejemplo
+  for (const course of sampleCourses) {
+    await prisma.grade.upsert({
+      where: {
+        studentId_courseId_semester: {
+          studentId: studentUser.id,
+          courseId: course.id,
+          semester: '2024-1',
+        },
+      },
+      update: {},
+      create: {
+        studentId: studentUser.id,
+        courseId: course.id,
+        value: Math.floor(Math.random() * 30) + 70, // 70-100
+        semester: '2024-1',
+      },
+    })
+  }
+
+  console.log('✅ Sample grades created')
+
+  // Crear asistencias de ejemplo
+  const today = new Date()
+  for (let i = 0; i < 20; i++) {
+    const date = new Date(today)
+    date.setDate(today.getDate() - i)
+
+    if (date.getDay() !== 0 && date.getDay() !== 6) { // Skip weekends
+      for (const course of sampleCourses) {
+        await prisma.attendance.upsert({
+          where: {
+            studentId_courseId_date: {
+              studentId: studentUser.id,
+              courseId: course.id,
+              date: date,
+            },
+          },
+          update: {},
+          create: {
+            studentId: studentUser.id,
+            courseId: course.id,
+            date: date,
+            status: Math.random() > 0.1 ? 'present' : 'absent', // 90% attendance
+          },
+        })
+      }
+    }
+  }
+
+  console.log('✅ Sample attendance records created')
+  
+  console.log('📝 Default passwords: admin123, teacher123, student123')
+  console.log('🎉 Seed completed!')
 }
 
 main()

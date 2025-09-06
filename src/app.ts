@@ -6,10 +6,17 @@ import { authenticateToken, AuthRequest } from './middleware/auth.js'
 //? fase 3
 import { authRoutes } from './modules/auth/auth.routes.js'
 //? fase 4 User crud
-//import { authRoutes } from './modules/auth/auth.routes.js'
 import { userRoutes } from './modules/user/user.routes.js'
 //? fase 7 Course CRUD
 import { courseRoutes } from './modules/course/course.routes.js'
+//? fase 8 Role & Permission
+import { roleRoutes } from './modules/role/role.routes.js'
+import { permissionRoutes } from './modules/permission/permission.routes.js'
+//? fase 9 student
+import { studentRoutes } from './modules/student/student.routes.js'
+//? fase 10 Teacher Module
+import { teacherRoutes } from './modules/teacher/teacher.routes.js'
+
 
 
 // Crear aplicación Express
@@ -84,6 +91,13 @@ app.use('/auth', authRoutes)
 app.use('/users', userRoutes)
 //? fase 7 Course CRUD
 app.use('/courses', courseRoutes)
+//? fase 8 Role & Permission
+app.use('/roles', roleRoutes)
+app.use('/permissions', permissionRoutes)
+//? fase 9 Student
+app.use('/students', studentRoutes)
+//? fase 10 Teacher Module
+app.use('/teachers', teacherRoutes)
 
 // 404 handler
 app.use('*', (req, res) => {
