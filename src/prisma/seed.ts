@@ -119,7 +119,24 @@ async function main() {
         name: 'TEACHER_DASHBOARD_ACCESS',
         description: 'Access to teacher dashboard',
       },
-    })
+    }),
+    // Permisos de calificaciones
+    prisma.permission.upsert({
+      where: { name: SYSTEM_PERMISSIONS.GRADE_READ },
+      update: {},
+      create: {
+        name: SYSTEM_PERMISSIONS.GRADE_READ,
+        description: 'Read grade information',
+      },
+    }),
+    prisma.permission.upsert({
+      where: { name: SYSTEM_PERMISSIONS.GRADE_MANAGE },
+      update: {},
+      create: {
+        name: SYSTEM_PERMISSIONS.GRADE_MANAGE,
+        description: 'Manage grades',
+      },
+    }),
   ])
 
   console.log('✅ Permissions created:', permissions.map(p => p.name))
@@ -368,10 +385,11 @@ async function main() {
   for (const course of sampleCourses) {
     await prisma.grade.upsert({
       where: {
-        studentId_courseId_semester: {
+        studentId_courseId_semester_assessmentName: {
           studentId: studentUser.id,
           courseId: course.id,
           semester: '2024-1',
+          assessmentName: 'Examen Parcial',
         },
       },
       update: {},
@@ -379,7 +397,60 @@ async function main() {
         studentId: studentUser.id,
         courseId: course.id,
         value: Math.floor(Math.random() * 30) + 70, // 70-100
+        assessmentType: 'exam',
+        assessmentName: 'Examen Parcial',
+        maxScore: 100,
+        weight: 0.3,
         semester: '2024-1',
+        gradedDate: new Date(),
+      },
+    })
+
+    // Crear una segunda calificación de ejemplo (quiz)
+    await prisma.grade.upsert({
+      where: {
+        studentId_courseId_semester_assessmentName: {
+          studentId: studentUser.id,
+          courseId: course.id,
+          semester: '2024-1',
+          assessmentName: 'Quiz 1',
+        },
+      },
+      update: {},
+      create: {
+        studentId: studentUser.id,
+        courseId: course.id,
+        value: Math.floor(Math.random() * 20) + 80, // 80-100
+        assessmentType: 'quiz',
+        assessmentName: 'Quiz 1',
+        maxScore: 100,
+        weight: 0.1,
+        semester: '2024-1',
+        gradedDate: new Date(Date.now() - 86400000), // Hace 1 día
+      },
+    })
+
+    // Crear una tercera calificación de ejemplo (assignment)
+    await prisma.grade.upsert({
+      where: {
+        studentId_courseId_semester_assessmentName: {
+          studentId: studentUser.id,
+          courseId: course.id,
+          semester: '2024-1',
+          assessmentName: 'Tarea 1',
+        },
+      },
+      update: {},
+      create: {
+        studentId: studentUser.id,
+        courseId: course.id,
+        value: Math.floor(Math.random() * 15) + 85, // 85-100
+        assessmentType: 'assignment',
+        assessmentName: 'Tarea 1',
+        maxScore: 100,
+        weight: 0.2,
+        semester: '2024-1',
+        gradedDate: new Date(Date.now() - 172800000), // Hace 2 días
       },
     })
   }

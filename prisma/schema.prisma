@@ -130,19 +130,24 @@ model StudentAcademic {
 }
 
 model Grade {
-  id          String   @id @default(cuid())
-  studentId   String
-  courseId    String
-  value       Float
-  letterGrade String?
-  semester    String
-  comments    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  student     User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  id             String   @id @default(cuid())
+  studentId      String
+  courseId       String
+  value          Float
+  assessmentType String   @default("exam") // exam, quiz, assignment, project, participation
+  assessmentName String
+  maxScore       Float    @default(100)
+  weight         Float    @default(0.1)
+  letterGrade    String?
+  semester       String
+  comments       String?
+  gradedDate     DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  course         Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student        User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  @@unique([studentId, courseId, semester])
+  @@unique([studentId, courseId, semester, assessmentName])
   @@map("grades")
 }
 
