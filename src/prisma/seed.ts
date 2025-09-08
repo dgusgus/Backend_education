@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Starting seed...')
   
-  // Crear permisos del sistema
+  // Crear permisos del sistema - TODOS los permisos primero
   const permissions = await Promise.all([
     // Permisos de usuarios
     prisma.permission.upsert({
@@ -112,14 +112,7 @@ async function main() {
         description: 'Manage students',
       },
     }),
-    prisma.permission.upsert({
-      where: { name: 'TEACHER_DASHBOARD_ACCESS' },
-      update: {},
-      create: {
-        name: 'TEACHER_DASHBOARD_ACCESS',
-        description: 'Access to teacher dashboard',
-      },
-    }),
+
     // Permisos de calificaciones
     prisma.permission.upsert({
       where: { name: SYSTEM_PERMISSIONS.GRADE_READ },
@@ -137,11 +130,39 @@ async function main() {
         description: 'Manage grades',
       },
     }),
+
+    // Permisos de asistencias
+    prisma.permission.upsert({
+      where: { name: SYSTEM_PERMISSIONS.ATTENDANCE_READ },
+      update: {},
+      create: {
+        name: SYSTEM_PERMISSIONS.ATTENDANCE_READ,
+        description: 'Read attendance information',
+      },
+    }),
+    prisma.permission.upsert({
+      where: { name: SYSTEM_PERMISSIONS.ATTENDANCE_MANAGE },
+      update: {},
+      create: {
+        name: SYSTEM_PERMISSIONS.ATTENDANCE_MANAGE,
+        description: 'Manage attendance records',
+      },
+    }),
+
+    // Permiso de dashboard de teacher
+    prisma.permission.upsert({
+      where: { name: 'TEACHER_DASHBOARD_ACCESS' },
+      update: {},
+      create: {
+        name: 'TEACHER_DASHBOARD_ACCESS',
+        description: 'Access to teacher dashboard',
+      },
+    }),
   ])
 
   console.log('✅ Permissions created:', permissions.map(p => p.name))
 
-  // Crear roles por defecto
+  // Crear roles por defecto - SOLO roles aquí
   const roles = await Promise.all([
     prisma.role.upsert({
       where: { name: 'admin' },
@@ -199,23 +220,30 @@ async function main() {
     SYSTEM_PERMISSIONS.COURSE_UPDATE,
     SYSTEM_PERMISSIONS.STUDENT_READ,
     SYSTEM_PERMISSIONS.STUDENT_MANAGE,
+    SYSTEM_PERMISSIONS.GRADE_READ,
+    SYSTEM_PERMISSIONS.GRADE_MANAGE,
+    SYSTEM_PERMISSIONS.ATTENDANCE_READ,
+    SYSTEM_PERMISSIONS.ATTENDANCE_MANAGE,
+    'TEACHER_DASHBOARD_ACCESS',
   ]
 
   for (const permName of teacherPermissions) {
-    const permission = permissions.find(p => p.name === permName)!
-    await prisma.rolePermission.upsert({
-      where: {
-        roleId_permissionId: {
+    const permission = permissions.find(p => p.name === permName)
+    if (permission) {
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: teacherRole.id,
+            permissionId: permission.id,
+          },
+        },
+        update: {},
+        create: {
           roleId: teacherRole.id,
           permissionId: permission.id,
         },
-      },
-      update: {},
-      create: {
-        roleId: teacherRole.id,
-        permissionId: permission.id,
-      },
-    })
+      })
+    }
   }
   console.log('✅ Teacher permissions assigned')
 
@@ -226,20 +254,22 @@ async function main() {
   ]
 
   for (const permName of studentPermissions) {
-    const permission = permissions.find(p => p.name === permName)!
-    await prisma.rolePermission.upsert({
-      where: {
-        roleId_permissionId: {
+    const permission = permissions.find(p => p.name === permName)
+    if (permission) {
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: studentRole.id,
+            permissionId: permission.id,
+          },
+        },
+        update: {},
+        create: {
           roleId: studentRole.id,
           permissionId: permission.id,
         },
-      },
-      update: {},
-      create: {
-        roleId: studentRole.id,
-        permissionId: permission.id,
-      },
-    })
+      })
+    }
   }
   console.log('✅ Student permissions assigned')
 

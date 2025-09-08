@@ -134,7 +134,7 @@ model Grade {
   studentId      String
   courseId       String
   value          Float
-  assessmentType String   @default("exam") // exam, quiz, assignment, project, participation
+  assessmentType String   @default("exam")
   assessmentName String
   maxScore       Float    @default(100)
   weight         Float    @default(0.1)

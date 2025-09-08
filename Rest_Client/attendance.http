@@ -1,0 +1,82 @@
+//? config
+@name = attendance
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+@baseUrl = http://{{host}}/{{name}}
+### Auth Tokens
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWZiZ2lqM3UwMDI2ang2dDd5MDF5cmNxIiwiZW1haWwiOiJhZG1pbkBlZHUuY29tIiwiaWF0IjoxNzU3MzU2NDM4LCJleHAiOjE3NTc5NjEyMzh9.rUYmfGh9GxujYtfM9uwsAgrupMbWHBVUfpmaFsmu9tI
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY1ZmVpdmwwMDAwb2U2OXlsYnBtb3VuIiwiZW1haWwiOiJ0ZXN0LnVzZXJAZWR1LmNvbSIsImlhdCI6MTc1Njk5MTU0NywiZXhwIjoxNzU3NTk2MzQ3fQ.s7rzgTlUAK-PksoutZ0oPEnHSDJwk4lfkknaEgCgooo
+@teacherToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0cmdqanMwMDFrb2UwbzB3endqMGhxIiwiZW1haWwiOiJ0ZWFjaGVyQGVkdS5jb20iLCJpYXQiOjE3NTY5OTM2NzEsImV4cCI6MTc1NzU5ODQ3MX0.itp_vU6j9lyDL5qYani3inAyYPDcTGBr9vRiY1aPkmg
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWY0cmdqcjkwMDFub2Uwb2w1YjRyM3VzIiwiZW1haWwiOiJzdHVkZW50QGVkdS5jb20iLCJpYXQiOjE3NTY5OTE4MTQsImV4cCI6MTc1NzU5NjYxNH0.1mWq49IIl4zSTig1Bwmd-S8iMjh5l4hFxUXiS0byc8c
+### Ids for testing
+@courseId = cmf5gh6mm0003oe69bbqa8qfx
+@teacherId = cmf4rgjjs001koe0o0wzwj0hq
+### Health Check
+GET http://localhost:3000/health HTTP/1.1
+
+###  Obtener Asistencias de Estudiante /attendance/student?studentId=xxx&courseId=yyy&startDate=2024-01-01&endDate=2024-03-20&semester=2024-1
+GET {{baseUrl}}/student?studentId=cmfbgijlk002cjx6tte3dg3ze HTTP/1.1
+Authorization: Bearer {{adminToken}}
+
+### Obtener Asistencias de Curso  /attendance/course?courseId=xxx&date=2024-03-20&startDate=2024-01-01&endDate=2024-03-20&semester=2024-1
+GET {{baseUrl}}/course?courseId=cmfbgijlw002gjx6tplaoukkh HTTP/1.1
+Authorization: Bearer {{adminToken}}
+
+### Obtener Estadísticas  /attendance/statistics?courseId=xxx&startDate=2024-01-01&endDate=2024-03-20&semester=2024-1
+GET {{baseUrl}}/statistics?courseId=cmfbgijlw002gjx6tplaoukkh HTTP/1.1
+Authorization: Bearer {{adminToken}}
+
+### Generar Reporte Completo
+GET {{baseUrl}}/report?startDate=2024-01-01&endDate=2024-03-20 HTTP/1.1
+Authorization: Bearer {{adminToken}}
+
+### Registrar Asistencia Individual
+POST {{baseUrl}} HTTP/1.1
+Authorization: Bearer {{adminToken}}
+content-type: application/json
+
+{
+  "studentId": "cmfbgijlk002cjx6tte3dg3ze",
+  "courseId": "cmfbgijlw002gjx6tplaoukkh",
+  "date": "2024-03-20T10:00:00.000Z",
+  "status": "present",
+  "comments": "Llegó puntual"
+}
+
+### Registrar Asistencias en Lote
+POST {{baseUrl}}/bulk HTTP/1.1
+Authorization: Bearer {{adminToken}}
+content-type: application/json
+
+{
+  "courseId": "cmfa1q3dd001zjxrlc9851vui",
+  "date": "2024-03-20T10:00:00.000Z",
+  "attendances": [
+    {
+      "studentId": "cmfa1q3d1001wjxrl2m7ctfoq",
+      "status": "present",
+      "comments": "Puntual"
+    },
+    {
+      "studentId": "cmfa1q3d2002wjxrl2m7ctfoq", 
+      "status": "late",
+      "comments": "Llegó 10 min tarde"
+    }
+  ]
+}
+
+### Actualizar Asistencia
+PUT {{baseUrl}}/cmfa1q3gg001xjxrl9e8k5m6n HTTP/1.1
+Authorization: Bearer {{adminToken}}
+content-type: application/json
+
+{
+  "status": "excused",
+  "comments": "Justificado con certificado médico"
+}
+
+### Remove Attendance 
+DELETE {{baseUrl}}/role/cmf4rgix2000eoe0oodkd6ywf/remove/STUDENT_MANAGE HTTP/1.1
+Authorization: Bearer {{adminToken}}

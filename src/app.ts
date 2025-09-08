@@ -18,6 +18,8 @@ import { studentRoutes } from './modules/student/student.routes.js'
 import { teacherRoutes } from './modules/teacher/teacher.routes.js'
 //? fase 11 Grade Module
 import { gradeRoutes } from './modules/grade/grade.routes.js'
+//? fase 12 Attendance Module
+import { attendanceRoutes } from './modules/attendance/attendance.routes.js'
 
 
 
@@ -102,6 +104,8 @@ app.use('/students', studentRoutes)
 app.use('/teachers', teacherRoutes)
 //? fase 11 Grade Module
 app.use('/grades', gradeRoutes)
+//? fase 12 Attendance Module
+app.use('/attendance', attendanceRoutes)
 
 // 404 handler
 app.use('*', (req, res) => {
